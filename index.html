@@ -18,23 +18,35 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start; /* Align content to the top */
         min-height: 100vh;
         overflow: hidden; /* Disable scrolling */
       }
-      h1 {
-        text-align: center;
-        margin-bottom: 10px;
-        font-size: 24px;
+      /* Header container for player name and game title */
+      #header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        box-sizing: border-box;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: #add8e6;
+        z-index: 100;
       }
       /* Player name display */
       #player-name {
-        position: absolute;
-        top: 20px;
-        left: 20px;
         font-size: 18px;
         font-weight: bold;
         color: blue; /* Player name in blue */
+      }
+      /* Game title */
+      #game-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #000;
       }
       /* Controls container with flex layout for timer, number box and buttons */
       #controls {
@@ -44,6 +56,7 @@
         align-items: center;
         gap: 15px;
         margin-bottom: 20px;
+        margin-top: 80px; /* Add margin to avoid overlap with header */
       }
       /* 3D Timer display */
       #timer {
@@ -97,8 +110,9 @@
       #sudoku-board {
         margin: 0 auto;
         border-collapse: collapse;
-        width: 100%;
+        width: 90%;
         max-width: 450px; /* Ensure it fits on small screens */
+        margin-top: 20px; /* Adjust puzzle upwards */
       }
       #sudoku-board td {
         width: 11.11%; /* Equal width for all cells */
@@ -181,9 +195,7 @@
       footer {
         position: fixed;
         bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        text-align: center;
+        right: 10px;
         font-size: 18px;
         font-weight: bold;
         color: red;
@@ -191,9 +203,12 @@
       }
       /* Start button container at bottom center */
       #start-btn-container {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
         width: 100%;
         text-align: center;
-        margin-top: 20px;
       }
       /* Prevent text selection everywhere */
       * {
@@ -202,8 +217,12 @@
     </style>
   </head>
   <body>
-    <div id="player-name"></div>
-    <h1>3D Sudoku Game</h1>
+    <!-- Header for player name and game title -->
+    <div id="header">
+      <div id="player-name"></div>
+      <div id="game-title">3D Sudoku Game</div>
+    </div>
+    <!-- Controls and Sudoku board -->
     <div id="controls">
       <div id="timer">Time: 00:00</div>
       <div id="number-box"></div>
@@ -224,6 +243,7 @@
         <button id="modal-restart-btn">Restart</button>
       </div>
     </div>
+    <!-- Footer with developer name -->
     <footer>
       Developed by <span class="developer">KhanOsama</span>
     </footer>
