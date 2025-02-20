@@ -23,6 +23,15 @@
         text-align: center;
         margin-bottom: 10px;
       }
+      /* Player name display */
+      #player-name {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #000;
+      }
       /* Controls container with flex layout for timer, number box and buttons */
       #controls {
         display: flex;
@@ -68,11 +77,8 @@
         transition: background-color 0.1s, box-shadow 0.1s;
         text-shadow: 2px 2px 2px #aaa;
       }
-      button:focus,
       button:active {
-        outline: none;
         box-shadow: none;
-        background-color: #fff;
       }
       /* Play button style (the start button) in blue (blur) color with black 3D text */
       .play-btn {
@@ -191,6 +197,7 @@
     </style>
   </head>
   <body>
+    <div id="player-name"></div>
     <h1>3D Sudoku Game</h1>
     <div id="controls">
       <div id="timer">Time: 00:00</div>
@@ -268,7 +275,16 @@
           ],
         },
       ];
-      
+
+      // Function to shuffle the puzzle
+      function shufflePuzzle(puzzle) {
+        for (let i = puzzle.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [puzzle[i], puzzle[j]] = [puzzle[j], puzzle[i]];
+        }
+        return puzzle;
+      }
+
       // Use the first puzzle initially
       let currentPuzzle = puzzles[0];
       let timerInterval;
@@ -277,14 +293,15 @@
       let paused = false;
       let playerName = "";
       let timerStarted = false;
-      
+
       window.onload = function () {
         playerName = prompt("Enter your name:") || "Player";
+        document.getElementById("player-name").textContent = `Player: ${playerName}`;
         createBoard();
         // Keep timer at 0 until the "Play" button is clicked.
         document.getElementById("timer").textContent = "Time: " + formatTime(seconds);
       };
-      
+
       // Format time as MM:SS
       function formatTime(totalSeconds) {
         const minutes = Math.floor(totalSeconds / 60);
@@ -295,7 +312,7 @@
           (secs < 10 ? "0" + secs : secs)
         );
       }
-      
+
       // Create the Sudoku board
       function createBoard() {
         const board = document.getElementById("sudoku-board");
@@ -332,14 +349,14 @@
           board.appendChild(tr);
         }
       }
-      
+
       // Update the number-box with the latest typed number
       function updateNumberBox(val, isCorrect) {
         const numberBox = document.getElementById("number-box");
         numberBox.textContent = val;
         numberBox.style.backgroundColor = isCorrect ? "lightgreen" : "#fff";
       }
-      
+
       // Handler for user input on cell
       function handleInput(e) {
         const input = e.target;
@@ -366,7 +383,7 @@
         }
         checkWin();
       }
-      
+
       // Check if the puzzle is solved
       function checkWin() {
         const inputs = document.querySelectorAll("input.sudoku-input");
@@ -377,7 +394,7 @@
         }
         endGame();
       }
-      
+
       // Timer functions
       function startTimer() {
         timerInterval = setInterval(() => {
@@ -387,11 +404,11 @@
           }
         }, 1000);
       }
-      
+
       function stopTimer() {
         clearInterval(timerInterval);
       }
-      
+
       // End game: show modal with win message and options
       function endGame() {
         stopTimer();
@@ -406,7 +423,7 @@
           ".";
         modal.style.display = "flex";
       }
-      
+
       // Disable all input cells after win
       function disableInputs() {
         const inputs = document.querySelectorAll("input.sudoku-input");
@@ -414,7 +431,7 @@
           input.disabled = true;
         }
       }
-      
+
       // Enable inputs (for resume/restart)
       function enableInputs() {
         const inputs = document.querySelectorAll("input.sudoku-input");
@@ -424,7 +441,7 @@
           input.classList.remove("correct", "wrong");
         }
       }
-      
+
       // Control buttons events
       document.getElementById("pause-btn").addEventListener("click", function () {
         if (paused) {
@@ -435,7 +452,7 @@
           this.textContent = "Resume";
         }
       });
-      
+
       document.getElementById("restart-btn").addEventListener("click", function () {
         enableInputs();
         seconds = 0;
@@ -444,10 +461,11 @@
         stopTimer();
         startTimer();
       });
-      
+
       document.getElementById("new-game-btn").addEventListener("click", function () {
         const randomIndex = Math.floor(Math.random() * puzzles.length);
         currentPuzzle = puzzles[randomIndex];
+        currentPuzzle.puzzle = shufflePuzzle(currentPuzzle.puzzle);
         seconds = 0;
         paused = false;
         document.getElementById("timer").textContent = "Time: " + formatTime(seconds);
@@ -455,7 +473,7 @@
         createBoard();
         startTimer();
       });
-      
+
       // Modal buttons events
       document.getElementById("modal-resume-btn").addEventListener("click", function () {
         document.getElementById("modal").style.display = "none";
@@ -465,7 +483,7 @@
           startTimer();
         }
       });
-      
+
       document.getElementById("modal-restart-btn").addEventListener("click", function () {
         document.getElementById("modal").style.display = "none";
         enableInputs();
@@ -475,7 +493,7 @@
         stopTimer();
         startTimer();
       });
-      
+
       // Start button event: Clicking it will start the timer if not already started,
       // and then hide itself.
       document.getElementById("start-btn").addEventListener("click", function () {
