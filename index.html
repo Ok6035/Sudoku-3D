@@ -14,14 +14,18 @@
         -moz-user-select: none;
         -ms-user-select: none;
         margin: 0;
-        padding: 20px;
+        padding: 0;
         display: flex;
         flex-direction: column;
+        align-items: center;
+        justify-content: center;
         min-height: 100vh;
+        overflow: hidden; /* Disable scrolling */
       }
       h1 {
         text-align: center;
         margin-bottom: 10px;
+        font-size: 24px;
       }
       /* Player name display */
       #player-name {
@@ -30,7 +34,7 @@
         left: 20px;
         font-size: 18px;
         font-weight: bold;
-        color: #000;
+        color: blue; /* Player name in blue */
       }
       /* Controls container with flex layout for timer, number box and buttons */
       #controls {
@@ -93,10 +97,11 @@
       #sudoku-board {
         margin: 0 auto;
         border-collapse: collapse;
-        max-width: 100%;
+        width: 100%;
+        max-width: 450px; /* Ensure it fits on small screens */
       }
       #sudoku-board td {
-        width: 50px;
+        width: 11.11%; /* Equal width for all cells */
         height: 50px;
         text-align: center;
         vertical-align: middle;
@@ -174,11 +179,11 @@
       }
       /* Footer with developer name */
       footer {
-        margin-top: auto;
+        position: fixed;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
         text-align: center;
-        padding-top: 20px;
-      }
-      footer span.developer {
         font-size: 18px;
         font-weight: bold;
         color: red;
@@ -276,19 +281,9 @@
         },
       ];
 
-      // Function to shuffle the puzzle
-      function shufflePuzzle(puzzle) {
-        for (let i = puzzle.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [puzzle[i], puzzle[j]] = [puzzle[j], puzzle[i]];
-        }
-        return puzzle;
-      }
-
       // Use the first puzzle initially
       let currentPuzzle = puzzles[0];
       let timerInterval;
-      // Timer value starts at 0 and increments in seconds (formatted as MM:SS)
       let seconds = 0;
       let paused = false;
       let playerName = "";
@@ -298,7 +293,6 @@
         playerName = prompt("Enter your name:") || "Player";
         document.getElementById("player-name").textContent = `Player: ${playerName}`;
         createBoard();
-        // Keep timer at 0 until the "Play" button is clicked.
         document.getElementById("timer").textContent = "Time: " + formatTime(seconds);
       };
 
@@ -333,7 +327,6 @@
               input.className = "sudoku-input";
               input.dataset.row = i;
               input.dataset.col = j;
-              // Replace any existing number without requiring backspace.
               input.addEventListener("keypress", function (e) {
                 if (/^[1-9]$/.test(e.key)) {
                   e.preventDefault();
@@ -362,7 +355,6 @@
         const input = e.target;
         let val = input.value;
         updateNumberBox(val, false);
-        // Remove any non-digit or 0
         if (!/^[1-9]$/.test(val)) {
           input.value = "";
           input.classList.remove("correct", "wrong");
@@ -371,7 +363,6 @@
         }
         const row = input.dataset.row;
         const col = input.dataset.col;
-        // Check against solution
         if (parseInt(val) === currentPuzzle.solution[row][col]) {
           input.classList.add("correct");
           input.classList.remove("wrong");
@@ -465,7 +456,6 @@
       document.getElementById("new-game-btn").addEventListener("click", function () {
         const randomIndex = Math.floor(Math.random() * puzzles.length);
         currentPuzzle = puzzles[randomIndex];
-        currentPuzzle.puzzle = shufflePuzzle(currentPuzzle.puzzle);
         seconds = 0;
         paused = false;
         document.getElementById("timer").textContent = "Time: " + formatTime(seconds);
@@ -500,7 +490,6 @@
         if (!timerStarted) {
           startTimer();
           timerStarted = true;
-          // Hide the start button once the timer is started.
           this.style.display = "none";
         }
       });
